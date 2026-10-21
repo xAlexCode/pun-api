@@ -1,4 +1,67 @@
 import PunList from './components/PunList'
+import { useEffect, useState } from 'react'
+import { API_URL } from './config'
+import { capitalize } from './utils/format'
+
+
+
+function App() {
+  const [categories, setCategories] = useState<string[]>([])
+  const [category, setCategory] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoading(true)
+      setError('')
+      try {
+        const response = await fetch(`${API_URL}/categories`)
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`)
+        }
+        const data = await response.json()
+     
+        setCategories(data)
+
+      } catch (error) {
+       setError(error instanceof Error ? error.message : 'Unknown error')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+ return (
+  <main>
+    <h1>😄 Puns</h1>
+
+    <div className="toolbar">
+      <label>
+        Category
+        <select
+          id="category"
+          value={category}
+          onChange={e => setCategory(e.target.value)}
+        >
+          <option value="">All categories</option>
+          {categories.map(category => (
+            <option key={category} value={category}>{capitalize(category)}</option>
+          ))}
+        </select>
+      </label>
+    </div>
+
+    {loading && <p>Loading categories...</p>}
+    {error && <p className="error">Something went wrong: {error}</p>}
+
+    <PunList category={category} />
+  </main>
+)
+}
+export default App
 
 /**
  * Exercise: Puns client v1 (API docs: https://pun-api-with-auth.vercel.app/docs)
@@ -37,19 +100,3 @@ import PunList from './components/PunList'
  * - Stop the timer in the cleanup (see "14.UseEffectAndFetchingData/Clock"). What happens if you forget it?
  *   (Hint: change category a few times and add a console.log in the interval)
  */
-function App() {
-  return (
-    <main>
-      <h1>😄 Puns</h1>
-
-      <label htmlFor="category">Category </label>
-      <select id="category">
-        <option value="">All categories</option>
-      </select>
-
-      <PunList />
-    </main>
-  )
-}
-
-export default App

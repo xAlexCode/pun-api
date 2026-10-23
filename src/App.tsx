@@ -6,20 +6,19 @@ import { capitalize } from './utils/format'
 
 
 function App() {
-  const [categories, setCategories] = useState<string[]>([])
+  const [categories, setCategories] = useState<string[]>([]) //förväntas en array med flera strängar
   const [category, setCategory] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
+    console.log('UseEffect 1: On mount')
+
     const fetchCategories = async () => {
       setLoading(true)
       setError('')
       try {
         const response = await fetch(`${API_URL}/categories`)
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`)
-        }
         const data = await response.json()
      
         setCategories(data)
@@ -44,7 +43,7 @@ function App() {
         <select
           id="category"
           value={category}
-          onChange={e => setCategory(e.target.value)}
+          onChange={e => setCategory(e.target.value)} // Uppdatera state när användaren väljer en kategori
         >
           <option value="">All categories</option>
           {categories.map(category => (
@@ -57,7 +56,7 @@ function App() {
     {loading && <p>Loading categories...</p>}
     {error && <p className="error">Something went wrong: {error}</p>}
 
-    <PunList category={category} />
+    <PunList category={category} categories={categories} />
   </main>
 )
 }

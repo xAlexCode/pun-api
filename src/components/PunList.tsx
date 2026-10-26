@@ -14,6 +14,7 @@ const PunList = ({ category, categories }: PunListProps) => {
   const [puns, setPuns] = useState<Pun[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showList, setShowList] = useState(true)
 
   const addPun = async (content: string, punCategory: string) => {
     try {
@@ -89,6 +90,11 @@ const PunList = ({ category, categories }: PunListProps) => {
     <>
       {isLoading && <p>Loading puns...</p>}
       {error && <p className="error">Could not load the puns: {error}</p>}
+      {showList &&  <p>Showing {puns.length} puns</p>} 
+
+      <button onClick ={() => setShowList(!showList)}>
+        {showList ? 'Hide' : 'Show'} puns
+      </button>
 
       <PunForm categories={categories} addPun={addPun} />
 
